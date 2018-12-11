@@ -1,2 +1,2 @@
 # docker
-test
+test deploy
