@@ -1,11 +1,11 @@
 package queue
 
 import (
+	"deploy/cache"
+	"deploy/logger"
+	"deploy/model"
+	"deploy/util"
 	"log"
-	"redis/cache"
-	"redis/logger"
-	"redis/model"
-	"redis/util"
 )
 
 const (

@@ -1,10 +1,10 @@
 package main
 
 import (
+	"deploy/cache"
+	"deploy/model"
+	"deploy/queue"
 	"math/rand"
-	"redis/cache"
-	"redis/model"
-	"redis/queue"
 	"time"
 )
 
