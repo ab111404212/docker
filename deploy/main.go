@@ -1,53 +1,51 @@
 package main
 
 import (
-	"fmt"
-	"reflect"
-	"unsafe"
+	"math/rand"
+	"redis/cache"
+	"redis/model"
+	"redis/queue"
+	"time"
 )
 
-type Test struct {
-	Arg1 int        `wyj:"arg1"`
-	Arg2 int        `wyj:"arg2"`
-	Add1 func() int `wyj:"add1"`
-}
+const (
+	SERVER_ADDR = "127.0.0.1:6379"
+)
 
-func (t *Test) Add() int {
-	return t.Arg1 + t.Arg2
-}
-
-type AddFunc func() int
+var end chan interface{}
 
 func main() {
-	p := fmt.Println
-	tt := Test{10, 20, func() int {
-		return 10
-	}}
-	v := reflect.Indirect(reflect.ValueOf(tt))
-	t := reflect.TypeOf(tt)
-	for i := 0; i < v.NumField(); i++ {
-		v1 := v.Field(i)
-		if v1.Kind() == reflect.Int {
-			p("===v:", v1.Int())
+	cache.Init()
+	AddTask()
+
+	queue.ProcessQueue()
+
+	<-end
+}
+
+func AddTask() {
+	go func() {
+		tick := time.Tick(3 * time.Second)
+		for {
+			select {
+			case <-tick:
+				n := rand.Intn(1000)
+				v := model.Value{A: n}
+				queue.Push(v)
+			}
 		}
-		if v1.Kind() == reflect.Func {
-			var pp *AddFunc
-			pp = (*AddFunc)(*(unsafe.Pointer)(v1.Pointer()))
-			p("===v:", (*pp)())
-		}
-	}
+	}()
 
-	p(t.NumMethod(), v.NumMethod())
+	// go func() {
+	// 	tick := time.Tick(10 * time.Millisecond)
+	// 	for {
+	// 		select {
+	// 		case <-tick:
+	// 			n := rand.Intn(1000000)
+	// 			v := queue.Value{A: n}
+	// 			queue.Push(v)
+	// 		}
+	// 	}
+	// }()
 
-	for i := 0; i < t.NumMethod(); i++ {
-		t1 := t.Method(i)
-		p("=====m:", t1.Name)
-	}
-
-	for i := 0; i < t.NumField(); i++ {
-		t1 := t.Field(i)
-		p("=====t:", t1.Tag.Get("wyj"), t1.Name, t1.Type)
-	}
-	p(tt.Add())
-	p("first github...")
 }
