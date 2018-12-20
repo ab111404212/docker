@@ -4,6 +4,7 @@ import (
 	"deploy/cache"
 	"deploy/model"
 	"deploy/queue"
+	"deploy/util"
 	"math/rand"
 	"time"
 )
@@ -15,6 +16,9 @@ const (
 var end chan interface{}
 
 func main() {
+
+	util.MarshalTest()
+
 	cache.Init()
 	AddTask()
 

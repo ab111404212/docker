@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package person;
+
+message Person{
+    message Email{
+        string id = 1;
+        string kind = 2;
+    }
+    message Person{
+        string name = 1;
+        string sex  = 2;
+    }
+
+    repeated Email email   = 1;
+    Person person = 2;
+}
